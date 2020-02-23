@@ -1,0 +1,1 @@
+{"version":3,"sources":["src/scss/index.scss"],"names":[],"mappings":"AAGA,KACI,eAHU,CAEd,OAGQ,WANK","file":"scss.7ce63482.css","sourceRoot":"..","sourcesContent":["$color: brown;\n$color1: white;\n\nbody{\n    background: $color1;\n    p {\n        color: $color;\n    }\n}"]}

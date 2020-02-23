@@ -1,0 +1,151 @@
+* {
+  margin: 0;
+  padding: 0; }
+
+#player {
+  background: #060a3d;
+  height: 100vh;
+  overflow: hidden; }
+  #player .header {
+    text-align: center;
+    padding-top: 15px;
+    height: 110px; }
+    #player .header h1 {
+      color: #fff;
+      font-size: 20px; }
+    #player .header p {
+      color: #868aaf;
+      font-size: 14px; }
+    #player .header .balls {
+      display: flex;
+      justify-content: center;
+      align-items: center; }
+      #player .header .balls span {
+        display: block;
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: #6a134f; }
+        #player .header .balls span.current {
+          width: 8px;
+          height: 8px;
+          background: #db3baa;
+          margin: 0 6px; }
+  #player main {
+    height: calc(100vh - 250px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 200vw; }
+    #player main.panel1 {
+      transform: translateX(0vw);
+      transition: all 0.3s; }
+    #player main.panel2 {
+      transform: translateX(-100vw);
+      transition: all .3s; }
+    #player main .panel-effect {
+      width: 100vw; }
+      #player main .panel-effect .effect {
+        position: relative;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        height: 40vh;
+        margin-bottom: 30px; }
+        #player main .panel-effect .effect div {
+          background-size: contain;
+          position: absolute; }
+        #player main .panel-effect .effect .effect-1 {
+          background: url("/effect-no-move.e6a51026.svg") 0 0 no-repeat;
+          width: 70vw;
+          height: 70vw;
+          animation: rotate 20s linear infinite; }
+        #player main .panel-effect .effect .effect-2 {
+          background: url("/effect-move1.8d0ce205.svg") 0 0 no-repeat;
+          width: 60vw;
+          height: 60vw;
+          animation: rotate 20s linear infinite reverse; }
+        #player main .panel-effect .effect .effect-3 {
+          background: url("/effect-move2.143040a0.svg") 0 0 no-repeat;
+          width: 24vw;
+          height: 24vw;
+          animation: rotate 20s linear infinite; }
+      #player main .panel-effect .lyric p {
+        color: #868aaf;
+        font-size: 12px;
+        text-align: center; }
+        #player main .panel-effect .lyric p.current {
+          color: #fff;
+          font-size: 14px; }
+    #player main .panel-lyrics {
+      width: 100vw;
+      color: #868aaf;
+      text-align: center;
+      font-size: 16px; }
+  #player footer {
+    height: 140px; }
+    #player footer .buttons {
+      display: flex;
+      justify-content: center;
+      align-items: center; }
+      #player footer .buttons svg {
+        width: 24px;
+        height: 24px;
+        margin: 0 20px; }
+    #player footer .bar-area {
+      color: #868aaf;
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      margin: 14px; }
+      #player footer .bar-area .time-start {
+        width: 40px;
+        order: 1; }
+      #player footer .bar-area .time-emd {
+        width: 40px;
+        order: 3; }
+      #player footer .bar-area .bar {
+        flex: 1;
+        width: 80vw;
+        height: 4px;
+        background: #0025f1;
+        border-radius: 2px;
+        margin: 8px; }
+        #player footer .bar-area .bar .progress {
+          width: 30%;
+          transition: all 0.2s;
+          height: 100%;
+          border-radius: 2px;
+          background: #db3baa;
+          position: relative; }
+          #player footer .bar-area .bar .progress::after {
+            content: '';
+            position: absolute;
+            right: -12px;
+            top: -7px;
+            display: block;
+            width: 16px;
+            height: 16px;
+            background: url(/progress.798a5c76.svg) 0 0 no-repeat;
+            background-size: contain; }
+    #player footer .actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 20px; }
+      #player footer .actions svg {
+        width: 32px;
+        height: 32px; }
+        #player footer .actions svg.btn-play-pause {
+          width: 40px;
+          height: 40px; }
+
+@keyframes rotate {
+  0% {
+    transform: rotate(0deg); }
+  100% {
+    transform: rotate(360deg); } }
+
+
+/*# sourceMappingURL=/scss.8c25d549.css.map */
