@@ -273,21 +273,24 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
 
 console.log('index.js');
 
-var $ = function $(selector) {
-  return document.querySelector(selector);
-};
-
-var $$ = function $$(selector) {
-  return document.querySelectorAll(selector);
-};
-
 var Player =
 /*#__PURE__*/
 function () {
   function Player(node) {
+    var _this = this;
+
     _classCallCheck(this, Player);
 
-    this.root = typeof node === 'string' ? $(node) : node;
+    this.root = typeof node === 'string' ? document.querySelector(node) : node;
+
+    this.$ = function (selector) {
+      return _this.root.querySelector(selector);
+    };
+
+    this.$$ = function (selector) {
+      return _this.root.querySelectorAll(selector);
+    };
+
     this.songList = [];
     this.currentIndex = 0;
     this.audio = new Audio();
@@ -298,14 +301,15 @@ function () {
   _createClass(Player, [{
     key: "start",
     value: function start() {
-      var _this = this;
+      var _this2 = this;
 
       fetch('https://jirengu.github.io/data-mock/huawei-music/music-list.json').then(function (res) {
         return res.json();
       }).then(function (data) {
         console.log(data);
-        _this.songList = data;
-        _this.audio.src = _this.songList[_this.currentIndex].url;
+        _this2.songList = data;
+
+        _this2.renderSong();
       });
     }
   }, {
@@ -313,7 +317,7 @@ function () {
     value: function bind() {
       var self = this;
 
-      this.root.querySelector('.btn-play-pause').onclick = function () {
+      this.$('.btn-play-pause').onclick = function () {
         if (this.classList.contains('playing')) {
           self.audio.pause();
           this.classList.remove('playing');
@@ -327,15 +331,15 @@ function () {
         }
       };
 
-      this.root.querySelector('.btn-pre').onclick = function () {
+      this.$('.btn-pre').onclick = function () {
         self.playPrevSong();
       };
 
-      this.root.querySelector('.btn-next').onclick = function () {
+      this.$('.btn-next').onclick = function () {
         self.playNextSong();
       };
 
-      var Swip = new _swiper.default(this.root.querySelector('.panels'));
+      var Swip = new _swiper.default(this.$('.panels'));
       Swip.on('swipLeft', function () {
         this.classList.remove('panel1');
         this.classList.add('panel2');
@@ -346,35 +350,71 @@ function () {
       });
     }
   }, {
+    key: "renderSong",
+    value: function renderSong() {
+      var songObj = this.songList[this.currentIndex];
+      this.$('.header h1').innerText = songObj.title;
+      this.$('.header p').innerText = songObj.author + ' - ' + songObj.albumn;
+      this.audio.src = songObj.url;
+      this.loadLyrics();
+    }
+  }, {
+    key: "loadLyrics",
+    value: function loadLyrics() {
+      fetch(this.songList[this.currentIndex].lyric).then(function (res) {
+        return res.json();
+      }).then(function (data) {
+        return console.log(data.lrc.lyric);
+      });
+    }
+  }, {
     key: "playPrevSong",
     value: function playPrevSong() {
-      var _this2 = this;
+      var _this3 = this;
 
       this.currentIndex = (this.songList.length + this.currentIndex - 1) % this.songList.length;
       this.audio.src = this.songList[this.currentIndex].url;
+      this.renderSong();
 
       this.audio.oncanplaythrough = function () {
-        return _this2.audio.play();
-      };
+        return _this3.audio.play();
+      }; // 点击此按钮，中间按钮变为 pause
+
+
+      this.$('.btn-play-pause use').setAttribute('xlink:href', '#icon-pause');
     }
   }, {
     key: "playNextSong",
     value: function playNextSong() {
-      var _this3 = this;
+      var _this4 = this;
 
       this.currentIndex = (this.songList.length + this.currentIndex + 1) % this.songList.length;
       this.audio.src = this.songList[this.currentIndex].url;
+      this.renderSong();
 
       this.audio.oncanplaythrough = function () {
-        return _this3.audio.play();
+        return _this4.audio.play();
       };
+
+      this.$('.btn-play-pause use').setAttribute('xlink:href', '#icon-pause');
+    }
+  }, {
+    key: "setLineToCenter",
+    value: function setLineToCenter(node) {
+      var offset = node.offsetTop - this.$('.panel-lyrics .container').offsetHeight / 2;
+      offset > 0 ? offset : 0;
+      this.$('.panel-lyrics .container').style.transform = "translateY(-".concat(offset, "px)");
+      this.$$('.panel-lyrics .container p').forEach(function (node) {
+        return node.classList.remove('current');
+      });
+      node.classList.add('current');
     }
   }]);
 
   return Player;
 }();
 
-new Player('#player');
+window.p = new Player('#player');
 },{"./icons.js":"src/javascript/icons.js","./swiper.js":"src/javascript/swiper.js"}],"../../.config/yarn/global/node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
@@ -403,7 +443,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "55912" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "62410" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
