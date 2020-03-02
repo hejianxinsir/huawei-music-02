@@ -10,6 +10,9 @@ class Player {
         this.songList = []
         this.currentIndex = 0
         this.audio = new Audio()
+        this.lyricsArr = []     // 歌词数组。包含时间、歌词。
+        this.lyricIndex = -1    // 显示歌词。-1 代表无显示。
+
         this.start()
         this.bind()
     }
@@ -18,6 +21,7 @@ class Player {
         fetch('https://jirengu.github.io/data-mock/huawei-music/music-list.json')
             .then(res => res.json())
             .then(data => {
+                console.log('音乐信息')
                 console.log(data)
                 this.songList = data
                 this.renderSong()
@@ -32,19 +36,39 @@ class Player {
                 this.classList.remove('playing')
                 this.classList.add('pause')
                 this.querySelector('use').setAttribute('xlink:href', '#icon-play')
+
+                self.$$('.panel-effect .effect div').forEach((item) => {
+                    item.classList.remove('rotate')
+                })
             }else if(this.classList.contains('pause')) {
                 self.audio.play()
                 this.classList.remove('pause')
                 this.classList.add('playing')
-                this.querySelector('use').setAttribute('xlink:href', '#icon-pause') 
+                this.querySelector('use').setAttribute('xlink:href', '#icon-pause')
+
+                self.$$('.panel-effect .effect div').forEach((item) => {
+                    item.classList.add('rotate')
+                })
             }
         }
 
         this.$('.btn-pre').onclick = function() {
-            self.playPrevSong()
+            console.log('pre')
+            self.currentIndex = (self.songList.length + self.currentIndex - 1) % self.songList.length
+            self.renderSong()
+            self.playSong()
         }
         this.$('.btn-next').onclick = function() {
-            self.playNextSong()
+            self.currentIndex = (self.songList.length + self.currentIndex + 1) % self.songList.length
+            self.renderSong()
+            self.playSong()
+        }
+
+        this.audio.ontimeupdate = function() {
+            console.log('当前时间')
+            console.log(parseInt(self.audio.currentTime*1000))
+            self.locateLyric()
+            self.setProgressBar()
         }
 
         let Swip = new Swiper(this.$('.panels'))
@@ -63,40 +87,125 @@ class Player {
         this.$('.header h1').innerText = songObj.title
         this.$('.header p').innerText = songObj.author + ' - ' + songObj.albumn
         this.audio.src = songObj.url
+        this.audio.onloadedmetadata = () => this.$('.time-start').innerText = this.formateTime(this.audio.duration)
+
         this.loadLyrics()
+    }
+
+    playSong() {
+        this.audio.oncanplaythrough = () => this.audio.play()
     }
 
     loadLyrics() {
         fetch(this.songList[this.currentIndex].lyric)
             .then(res => res.json())
-            .then(data => console.log(data.lrc.lyric))
+            .then(data => {
+                console.log('data.lrc.lyric')
+                console.log(data.lrc.lyric)
+                this.setLyrics(data.lrc.lyric)
+                window.lyrics = data.lrc.lyric
+            })
     }
 
-    playPrevSong() {
-        this.currentIndex = (this.songList.length + this.currentIndex - 1) % this.songList.length
-        this.audio.src = this.songList[this.currentIndex].url
-        this.renderSong()
-        this.audio.oncanplaythrough = () => this.audio.play()
-        // 点击此按钮，中间按钮变为 pause
-        this.$('.btn-play-pause use').setAttribute('xlink:href', '#icon-pause')
-    }
+    // locateLyric() {
+    //     console.log('locateLyric')
+    //     let currentTime = this.audio.currentTime*1000
+    //     let nextLineTime = this.lyricsArr[this.lyricIndex+1][0]
+    //     if(currentTime > nextLineTime && this.lyricIndex < this.lyricsArr.length - 1) {
+    //         this.lyricIndex++
+    //         let node = this.$('[data-time="'+this.lyricsArr[this.lyricIndex][0]+'"]')
+    //         if(node) this.setLyricToCenter(node)
+    //         this.$$('.panel-effect .lyric p')[0].innerText = this.lyricsArr[this.lyricIndex][1]
+    //         this.$$('.panel-effect .lyric p')[1].innerText = this.lyricsArr[this.lyricIndex+1] ? this.lyricsArr[this.lyricIndex+1][1] : ''
+    //     }
+    // }
 
-    playNextSong() {
-        this.currentIndex = (this.songList.length + this.currentIndex + 1) % this.songList.length
-        this.audio.src = this.songList[this.currentIndex].url
-        this.renderSong()
-        this.audio.oncanplaythrough = () => this.audio.play()
-        this.$('.btn-play-pause use').setAttribute('xlink:href', '#icon-pause')
+    locateLyric() {
+        console.log('locateLyric')
+        let currentTime = this.audio.currentTime*1000
+        let nextLineTime = this.lyricsArr[this.lyricIndex+1][0]
+        if(currentTime > nextLineTime && this.lyricIndex < this.lyricsArr.length - 1) {
+          this.lyricIndex++
+          let node = this.$('[data-time="'+this.lyricsArr[this.lyricIndex][0]+'"]')
+          if(node) this.setLineToCenter(node)
+          this.$$('.panel-effect .lyric p')[0].innerText = this.lyricsArr[this.lyricIndex][1]
+          this.$$('.panel-effect .lyric p')[1].innerText = this.lyricsArr[this.lyricIndex+1] ? this.lyricsArr[this.lyricIndex+1][1] : ''
+        }
+      }
+
+    setLyrics(lyrics) {
+        this.lyricIndex = 0
+        let fragment = document.createDocumentFragment()
+        let lyricsArr  = []
+        this.lyricsArr = lyricsArr
+        lyrics.split(/\n/)
+          .filter(str => str.match(/\[.+?\]/))
+          .forEach(line => {
+            let str = line.replace(/\[.+?\]/g, '')
+            line.match(/\[.+?\]/g).forEach(t=>{
+              t = t.replace(/[\[\]]/g,'')
+              let milliseconds = parseInt(t.slice(0,2))*60*1000 + parseInt(t.slice(3,5))*1000 + parseInt(t.slice(6))
+              lyricsArr.push([milliseconds, str])
+            })
+          })
+    
+          lyricsArr.filter(line => line[1].trim() !== '').sort((v1, v2) => {
+            if(v1[0] > v2[0]) {
+              return 1
+            } else {
+              return -1
+            }
+          }).forEach(line => {
+              let node = document.createElement('p')
+              node.setAttribute('data-time', line[0])
+              node.innerText = line[1]
+              fragment.appendChild(node)
+            })
+          this.$('.panel-lyrics .container').innerHTML = ''
+          this.$('.panel-lyrics .container').appendChild(fragment)
     }
 
     setLineToCenter(node){
-        let offset = node.offsetTop - this.$('.panel-lyrics .container').offsetHeight/2
-        offset > 0 ? offset : 0
-        this.$('.panel-lyrics .container').style.transform = `translateY(-${offset}px)`
+        let translateY = node.offsetTop - this.$('.panel-lyrics .container').offsetHeight/2
+        translateY = translateY > 0 ? translateY : 0
+        this.$('.panel-lyrics .container').style.transform = `translateY(-${translateY}px)`
         this.$$('.panel-lyrics .container p').forEach(node => node.classList.remove('current'))
         node.classList.add('current')
     }
 
+    setProgressBar() {
+        console.log('setProgressBar')
+        let percent = (this.audio.currentTime * 100 / this.audio.duration) + '%'
+        console.log('百分比')
+        console.log(percent)
+        this.$('.bar .progress').style.width = percent
+        this.$('.time-end').innerText = this.formateTime(this.audio.currentTime)
+    }
+
+    formateTime(secondsTotal) {
+        let minutes = parseInt(secondsTotal/60)
+        minutes = minutes >= 10 ? '' + minutes : '0' + minutes
+        let seconds = parseInt(secondsTotal%60)
+        seconds = seconds >= 10 ? '' + seconds : '0' + seconds
+        return minutes + ':' + seconds
+    }
+
+    // playPrevSong() {
+    //     this.currentIndex = (this.songList.length + this.currentIndex - 1) % this.songList.length
+    //     this.audio.src = this.songList[this.currentIndex].url
+    //     this.renderSong()
+    //     this.audio.oncanplaythrough = () => this.audio.play()
+    //     // 点击此按钮，中间按钮变为 pause
+    //     this.$('.btn-play-pause use').setAttribute('xlink:href', '#icon-pause')
+    // }
+
+    // playNextSong() {
+    //     this.currentIndex = (this.songList.length + this.currentIndex + 1) % this.songList.length
+    //     this.audio.src = this.songList[this.currentIndex].url
+    //     this.renderSong()
+    //     this.audio.oncanplaythrough = () => this.audio.play()
+    //     this.$('.btn-play-pause use').setAttribute('xlink:href', '#icon-pause')
+    // }
 }
 
 window.p = new Player('#player')

@@ -80,20 +80,27 @@ $color3: #0025f1;
                 .effect-1 {
                     background: url('../svg/effect-no-move.svg') 0 0 no-repeat;
                     width: 70vw; height: 70vw;
-                    animation: rotate 20s linear infinite;
+                    &.rotate{
+                        animation: rotate 20s linear infinite;
+                    }
                 }
                 .effect-2 {
                     background: url('../svg/effect-move1.svg') 0 0 no-repeat;
                     width: 60vw; height: 60vw;
-                    animation: rotate 20s linear infinite reverse;
+                    &.rotate{
+                        animation: rotate 20s linear infinite reverse;
+                    }
                 }
                 .effect-3 {
                     background: url('../svg/effect-move2.svg') 0 0 no-repeat;
                     width: 24vw; height: 24vw;
-                    animation: rotate 20s linear infinite;
+                    &.rotate{
+                        animation: rotate 20s linear infinite;
+                    }
                 }
             }
             .lyric {
+                height: 40px;
                 p {
                     color: $color1;
                     font-size: 12px;
@@ -114,11 +121,11 @@ $color3: #0025f1;
             .container {
                 transform: translateY(-100px);
                 transition: all .3s;
-                line-height: 1.8;
+                line-height: 2;
                 height: 100%;
                 p {
                     text-align: center;
-                    font-size: 14px;
+                    font-size: 15px;
                     color: $color1;
                     &.current {
                         color: $color;
@@ -149,10 +156,12 @@ $color3: #0025f1;
             margin: 14px;
 
             .time-start {
+                display: block;
                 width: 40px;
                 order: 1;
             }
             .time-emd {
+                display: block;
                 width: 40px;
                 order: 3
             }
@@ -167,7 +176,7 @@ $color3: #0025f1;
 
                 .progress {
                     width: 30%;
-                    transition: all 0.2s;
+                    transition: all 0.3s;
                     height: 100%;
                     border-radius: 2px;
                     background: $color2;

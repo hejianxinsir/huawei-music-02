@@ -59,25 +59,30 @@
         #player main .panel-effect .effect .effect-1 {
           background: url("/effect-no-move.e6a51026.svg") 0 0 no-repeat;
           width: 70vw;
-          height: 70vw;
-          animation: rotate 20s linear infinite; }
+          height: 70vw; }
+          #player main .panel-effect .effect .effect-1.rotate {
+            animation: rotate 20s linear infinite; }
         #player main .panel-effect .effect .effect-2 {
           background: url("/effect-move1.8d0ce205.svg") 0 0 no-repeat;
           width: 60vw;
-          height: 60vw;
-          animation: rotate 20s linear infinite reverse; }
+          height: 60vw; }
+          #player main .panel-effect .effect .effect-2.rotate {
+            animation: rotate 20s linear infinite reverse; }
         #player main .panel-effect .effect .effect-3 {
           background: url("/effect-move2.143040a0.svg") 0 0 no-repeat;
           width: 24vw;
-          height: 24vw;
-          animation: rotate 20s linear infinite; }
-      #player main .panel-effect .lyric p {
-        color: #868aaf;
-        font-size: 12px;
-        text-align: center; }
-        #player main .panel-effect .lyric p.current {
-          color: #fff;
-          font-size: 14px; }
+          height: 24vw; }
+          #player main .panel-effect .effect .effect-3.rotate {
+            animation: rotate 20s linear infinite; }
+      #player main .panel-effect .lyric {
+        height: 40px; }
+        #player main .panel-effect .lyric p {
+          color: #868aaf;
+          font-size: 12px;
+          text-align: center; }
+          #player main .panel-effect .lyric p.current {
+            color: #fff;
+            font-size: 14px; }
     #player main .panel-lyrics {
       width: 100vw;
       height: calc(100% - 40px);
@@ -85,11 +90,11 @@
       #player main .panel-lyrics .container {
         transform: translateY(-100px);
         transition: all .3s;
-        line-height: 1.8;
+        line-height: 2;
         height: 100%; }
         #player main .panel-lyrics .container p {
           text-align: center;
-          font-size: 14px;
+          font-size: 15px;
           color: #868aaf; }
           #player main .panel-lyrics .container p.current {
             color: #fff;
@@ -111,9 +116,11 @@
       align-items: center;
       margin: 14px; }
       #player footer .bar-area .time-start {
+        display: block;
         width: 40px;
         order: 1; }
       #player footer .bar-area .time-emd {
+        display: block;
         width: 40px;
         order: 3; }
       #player footer .bar-area .bar {
@@ -125,7 +132,7 @@
         margin: 8px; }
         #player footer .bar-area .bar .progress {
           width: 30%;
-          transition: all 0.2s;
+          transition: all 0.3s;
           height: 100%;
           border-radius: 2px;
           background: #db3baa;
